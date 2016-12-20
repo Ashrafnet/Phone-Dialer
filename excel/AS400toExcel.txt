@@ -1,0 +1,59 @@
+'**************************************
+' Name: AS400 to Excel
+' Description:This code uses a value in 
+'     cell B2 in Excel as a lookup on the AS40
+'     0 and returns values to cells C2 and D2 
+'     in Excel
+You must add a reference to:
+Microsoft ActiveX DAta Objects 2.0 library
+' By: Dan Belluscio
+'
+'
+' Inputs:Put the value you would like to
+'     lookup in cell B2
+then run macro
+'
+' Returns:None
+'
+'Assumes:DSN-Less connection
+'
+'Side Effects:None
+'This code is copyrighted and has limite
+'     d warranties.
+'Please see http://www.Planet-Source-Cod
+'     e.com/xq/ASP/txtCodeId.26024/lngWId.1/qx
+'     /vb/scripts/ShowCode.htm
+'for details.
+'**************************************
+
+Dim CN As New ADODB.Connection
+Dim RS As New ADODB.Recordset
+Dim strSQL As String
+
+
+Sub GetNameCity2()
+    CN.Open "Driver={Client Access ODBC Driver (32-bit)}; System=typeyouras400ipaddress-or-as400namehere; Uid=typeyouras400Namehere; Pwd=typeyouras400passwordhere;" ' open connection to database
+    'this section retrieves the name and sit
+    '     e
+    'PLTFILES# is the library
+    'ONETI561 is the file
+    'NAME, CITY, ADRNUM are the fields to re
+    '     trieve
+    RS.Open strSQL, CN
+    strSQL = "select NAME, CITY, ADRNUM from PLTFILES#.ONETI561 where PRADDR = 'Y' AND ADRNUM = '" & Range("B2").Value & "'"
+    RS.Open strSQL, CN
+
+
+    If RS.BOF Or RS.EOF Then
+        msgbox "Could not find lookup value."
+    Else
+        RS.MoveFirst
+        Range("C2").Value = RS.Fields(0)
+        Range("D2").Value = RS.Fields(1)
+    End If
+    
+    RS.Close 'Close recordset
+    CN.Close 'Close connection
+End Sub
+
+		

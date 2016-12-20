@@ -1,0 +1,49 @@
+'**************************************
+' Name: Retrieve Excel Cell Values Easil
+'     y
+' Description:Retrieves Excel spreadshee
+'     t cell information based on a set of par
+'     ameters sent to the function. It then se
+'     ts the value of the variable assigned wh
+'     en retrieveing the information.
+' By: Ryan Rentfro
+'
+'
+' Inputs:Row value, column value, and fi
+'     le path.
+'
+' Returns:The value of the set cell
+'
+'Assumes:Object programming and undertan
+'     ding of functions.
+'
+'Side Effects:If you use this function t
+'     o retrieve massive amounts of data it is
+'     best to have excel open when doing so. I
+'     have computated 7 years of stock values 
+'     and then averaged all values retrieved f
+'     rom excel. It takes about 75% longer to 
+'     retrieve information when excel is close
+'     d.
+'This code is copyrighted and has limite
+'     d warranties.
+'Please see http://www.Planet-Source-Cod
+'     e.com/xq/ASP/txtCodeId.21978/lngWId.1/qx
+'     /vb/scripts/ShowCode.htm
+'for details.
+'**************************************
+
+
+
+Function getExcel(rowval As Integer, columnval As String, excelfile As String)
+    Dim excelSheet As Object 'Excel Sheet object
+    'Create an instance of Excel by file nam
+    '     e
+    Set excelSheet = CreateObject(excelfile)
+    mycell$ = columnval & rowval
+    getExcel = excelSheet.activesheet.range(mycell$).Value
+    'Retrieve the result using the cell by r
+    '     ow and column
+    Set excelSheet = Nothing'release object
+End Function
+		

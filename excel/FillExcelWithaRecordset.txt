@@ -1,0 +1,113 @@
+
+'**************************************
+'Windows API/Global Declarations for :Fi
+'     ll Excel With a Recordset
+'**************************************
+public PathExcel As String
+
+'**************************************
+' Name: Fill Excel With a Recordset
+' Description:It will open an excel docu
+'     ment and will fill it up with the record
+'     set you provided the function with.
+' By: Karim M. Garza
+'
+'
+' Inputs:Data as ADODB.Recordset
+'
+' Returns:you need to put 
+objExce.visible = true
+whenever you want excel to appear
+and destroy the object
+set objExcel = nothing
+'
+'Assumes:You need to have Excel installe
+'     d.
+Add a reference from the Project, References.
+'
+'Side Effects:None
+'This code is copyrighted and has limite
+'     d warranties.
+'Please see http://www.Planet-Source-Cod
+'     e.com/xq/ASP/txtCodeId.34133/lngWId.1/qx
+'     /vb/scripts/ShowCode.htm
+'for details.
+'**************************************
+
+
+
+Public Sub FillExcel(ByRef Data As ADODB.Recordset)
+    Dim intRecords As Integer
+    Dim i As Integer
+    Dim j As Integer
+    Dim Row As Integer
+    Dim Column As String
+    Dim Location As String
+    
+    Set objExcel = New Excel.Application
+    PathExcel = App.Path
+    
+
+
+    If bolFirstReportDone = False Or intReportQuantity = 0 Then
+        InitExcel
+        objExcel.Workbooks.Open PathExcel & "\Results.xls"
+    Else
+        objExcel.Workbooks.Open FileExcel
+    End If
+    
+    bookname = objExcel.ActiveWorkbook.Name
+    objExcel.Workbooks(bookname).Worksheets("Sheet1").Activate
+
+
+    If objExcel.Workbooks(bookname).Worksheets("Sheet1").Range("A1") <> "" Then
+        objExcel.Workbooks(bookname).Worksheets("Sheet1").Cells.Select
+        objExcel.Workbooks(bookname).ActiveSheet.Cells.Clear
+    End If
+    
+    Row = 1 'first row
+    Column = 65 'letter A
+    Data.MoveLast
+    Data.MoveFirst
+    intRecords = Data.RecordCount
+    
+
+
+    For i = 0 To Data.Fields.Count - 1
+        Data.MoveFirst
+        Row = 1
+        Location = Chr(Column) + Trim(Str(Row))
+        objExcel.Workbooks(bookname).Worksheets("Sheet1").Range(Location).FormulaR1C1 = Data.Fields(i).Name
+        Row = 2
+
+
+        For j = 0 To (intRecords - 1)
+            Location = Chr(Column) + Trim(Str(Row + j))
+
+
+            If IsNumeric(Data.Fields(i)) Then
+                objExcel.Workbooks(bookname).Worksheets("Sheet1").Range(Location).Value = Data.Fields(i)
+            Else
+                objExcel.Workbooks(bookname).Worksheets("Sheet1").Range(Location).FormulaR1C1 = Data.Fields(i)
+            End If
+            Data.MoveNext
+        Next j
+        'autofit
+        objExcel.Workbooks(bookname).Worksheets("Sheet1").Columns(Chr(Column) & ":" & Chr(Column)).EntireColumn.AutoFit
+
+
+        If Data.Fields(i).Name = strDateField Then
+            Location = Chr(Column) & "2" & ":" & Chr(Column) & Trim(Str(j + 1))
+            objExcel.Workbooks(bookname).Worksheets("Sheet1").Range(Location).NumberFormat = "mmm-yy"
+        End If
+        Column = Column + 1
+    Next i
+End Sub
+
+
+Private Sub InitExcel()
+    PathExcel = App.Path
+    FileExcel = PathExcel & "\" & Format(Now(), "yyyyummudduHhuNnuSs") & ".xls"
+End Sub
+
+		
